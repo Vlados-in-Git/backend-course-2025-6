@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Реєстрація Інвентарю</title>
+</head>
+<body>
+    <h1>Додати нову річ</h1>
+    <form action="/register" method="POST" enctype="multipart/form-data">
+        <div>
+            <label for="name">Назва (Inventory Name):</label><br>
+            <input type="text" id="name" name="inventory_name" required>
+        </div>
+        <br>
+        <div>
+            <label for="description">Опис (Description):</label><br>
+            <textarea id="description" name="description"></textarea>
+        </div>
+        <br>
+        <div>
+            <label for="photo">Фото:</label><br>
+            <input type="file" id="photo" name="photo" accept="image/*">
+        </div>
+        <br>
+        <button type="submit">Зареєструвати</button>
+    </form>
+</body>
+</html>
