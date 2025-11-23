@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	"dev": "nodemon  main.js --  -h localhost -p 3000 -c ./cache",
-	"start": "node main.js" 
-},
+    "dev": "nodemon  main.js --  -H localhost -p 3000 -c ./cache",
+    "start": "node main.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -15,7 +15,9 @@
     "commander": "^14.0.2",
     "express": "^5.1.0",
     "multer": "^2.0.2",
-    "superagent": "^10.2.3"
+    "superagent": "^10.2.3",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"

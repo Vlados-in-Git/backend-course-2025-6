@@ -1,0 +1,127 @@
+openapi: 3.0.0
+info:
+  title: Inventory API
+  description: API сервісу інвентаризації 
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /inventory:
+    get:
+      summary: Отримання списку всіх речей
+      responses:
+        200:
+          description: Успішно отримано масив об'єктів
+  /inventory/{id}:
+    get:
+      summary: Отримання інформації про конкретну річ
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Інформація про річ
+        404:
+          description: Річ не знайдено
+    put:
+      summary: Оновлення імені або опису речі
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        200:
+          description: Оновлено успішно
+    delete:
+      summary: Видалення речі
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Видалено успішно
+  /inventory/{id}/photo:
+    get:
+      summary: Отримання фото речі
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Фото (image/jpeg)
+    put:
+      summary: Оновити фото речі
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                photo:
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: Фото оновлено
+  /register:
+    post:
+      summary: Створити нову річ
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                inventory_name:
+                  type: string
+                description:
+                  type: string
+                photo:
+                  type: string
+                  format: binary
+      responses:
+        201:
+          description: Створено
+  /search:
+    post:
+      summary: Пошук речі
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                has_photo:
+                  type: string
+      responses:
+        200:
+          description: Знайдено

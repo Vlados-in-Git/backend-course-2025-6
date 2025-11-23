@@ -4,9 +4,13 @@ const fs = require('fs').promises;
 const fss = require('fs');
 const path = require('path');
 const multer = require('multer');
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+
+// налаштування CLI
 
 program
-  .requiredOption('-h, --host <host>', 'адреса сервера')
+  .requiredOption('-H, --host <host>', 'адреса сервера')
   .requiredOption('-p, --port <port>', 'порт сервера')
   .requiredOption('-c, --cache <path>', 'шлях до директорії з кешом');
 
@@ -15,6 +19,8 @@ const options = program.opts();
 const host = options.host;
 const port = options.port;
 const cacheDir = path.resolve(options.cache);
+
+// перевірка папки кешу
 
 if (!fss.existsSync(cacheDir)) {
   console.log(`Директорія кешу не існує. Створюємо: ${cacheDir}`);
@@ -28,8 +34,11 @@ if (!fss.existsSync(cacheDir)) {
   console.log(`Директорія кешу існує: ${cacheDir}`);
 }
 
+// масив для збереження даних
 
 let inventory = []; 
+
+//налаштування multer для завантаження фото
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -43,9 +52,17 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 const app = express();
 
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//  документація 
+
+const swaggerDocument = YAML.load('./swagger.yaml');
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// html форми
 
 app.get('/RegisterForm.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'RegisterForm.html'));
@@ -55,10 +72,21 @@ app.get('/SearchForm.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'SearchForm.html'));
 });
 
+/**
+ * GET /inventory
+ * Отримання списку всіх інвентаризованих речей.
+ * Повертає масив JSON об'єктів.
+ */
+
 app.get('/inventory', (req, res) => {
     res.status(200).json(inventory);
 });
 
+/**
+ * GET /inventory/:id
+ * Отримання інформації про конкретну річ за ID.
+ * Повертає JSON об'єкт або 404.
+ */
 
 app.get('/inventory/:id', (req, res) => {
     const item = inventory.find(i => i.id === req.params.id);
@@ -66,6 +94,11 @@ app.get('/inventory/:id', (req, res) => {
     res.json(item);
 });
 
+/**
+ * GET /inventory/:id/photo
+ * Отримання фото зображення конкретної речі.
+ * Віддає файл зображення (image/jpeg).
+ */
 
 app.get('/inventory/:id/photo', (req, res) => {
     const item = inventory.find(i => i.id === req.params.id);
@@ -77,6 +110,11 @@ app.get('/inventory/:id/photo', (req, res) => {
     res.sendFile(photoPath);
 });
 
+/**
+ * POST /register
+ * Реєстрація нового пристрою.
+ * Використовує multipart/form-data. Приймає ім'я, опис та фото.
+ */
 
 app.post('/register', upload.single('photo'), (req, res) => {
     const { inventory_name, description } = req.body;
@@ -94,6 +132,12 @@ app.post('/register', upload.single('photo'), (req, res) => {
     res.status(201).send(`Item created with ID: ${newItem.id}`);
 });
 
+/**
+ * POST /search
+ * Пошук пристрою за ID.
+ * Використовує x-www-form-urlencoded.
+ * Параметр has_photo додає посилання на фото в опис.
+ */
 
 app.post('/search', (req, res) => {
     const { id, has_photo } = req.body;
@@ -107,6 +151,12 @@ app.post('/search', (req, res) => {
     res.status(200).json(responseItem);
 });
 
+
+/**
+ * PUT /inventory/:id
+ * Оновлення імені або опису конкретної речі.
+ * Приймає JSON.
+ */
 
 app.put('/inventory/:id', (req, res) => {
     const item = inventory.find(i => i.id === req.params.id);
@@ -122,6 +172,12 @@ app.put('/inventory/:id', (req, res) => {
 });
 
 
+/**
+ * PUT /inventory/:id/photo
+ * Оновлення фото зображення конкретної речі.
+ * Приймає файл через multipart/form-data.
+ */
+
 app.put('/inventory/:id/photo', upload.single('photo'), (req, res) => {
     const item = inventory.find(i => i.id === req.params.id);
     if (!item) return res.status(404).send('Not Found');
@@ -135,6 +191,11 @@ app.put('/inventory/:id/photo', upload.single('photo'), (req, res) => {
 });
 
 
+/**
+ * DELETE /inventory/:id
+ * Видалення інвентаризованої речі зі списку.
+ */
+
 app.delete('/inventory/:id', (req, res) => {
     const index = inventory.findIndex(i => i.id === req.params.id);
     if (index === -1) return res.status(404).send('Not Found');
@@ -145,11 +206,14 @@ app.delete('/inventory/:id', (req, res) => {
     res.send('Item deleted');
 });
 
+// Обробка неправильних методів (405)
 
-app.all('/inventory*', (req, res) => {
-
+app.all(/^\/inventory/, (req, res) => {
      res.status(405).send('Method Not Allowed');
 });
+
+
+// головна сторінка
 
 
 
@@ -157,12 +221,14 @@ app.get('/', (req, res) => {
     res.send(`
         <h1>Сервіс Інвентаризації</h1>
         <ul>
-            <li><a href="/RegisterForm.html">Зареєструвати річ</a></li>
-            <li><a href="/SearchForm.html">Знайти річ за ID</a></li>
+           <li><a href="/docs">Swagger Документація</a></li>
+            <li><a href="/RegisterForm.html">Зареєструвати річ (HTML форма)</a></li>
+            <li><a href="/SearchForm.html">Знайти річ (HTML форма)</a></li>
             <li><a href="/inventory">Список всіх речей (JSON)</a></li>
         </ul>
     `);
 });
+
 
 app.listen(port, host, () => {
   console.log(`Сервер запущено на http://${host}:${port}`);
