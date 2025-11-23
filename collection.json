@@ -1,0 +1,203 @@
+{
+	"info": {
+		"_postman_id": "4b46d169-8deb-4a2f-bae9-34d57e987e4b",
+		"name": "InventoryAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50292532",
+		"_collection_link": "https://vlados-in-git-9872850.postman.co/workspace/ok's-Workspace~90bbab7d-87a2-4ce3-8302-444a8da43e6f/collection/50292532-4b46d169-8deb-4a2f-bae9-34d57e987e4b?action=share&source=collection_link&creator=50292532"
+	},
+	"item": [
+		{
+			"name": "RegisterItem",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "inventory_name",
+							"value": "Thinkpad",
+							"type": "text"
+						},
+						{
+							"key": "description ",
+							"value": "The best peace of computer machines",
+							"type": "text"
+						},
+						{
+							"key": "photo",
+							"type": "file",
+							"src": "postman-cloud:///1f0c8854-46c5-4000-a1c4-dc414efc0e89"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetAllItems",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/inventory",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"inventory"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetItemByID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/inventory/1763914346124",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"inventory",
+						"1763914346124"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateItemDetails",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Lenovo ThinkPad\",\n  \"description\": \"Супер потужний ноут\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/inventory/1763914346124",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"inventory",
+						"1763914346124"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdatePhoto",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "photo",
+							"type": "file",
+							"src": "postman-cloud:///1f0c889f-da9e-4510-afc4-985a578c94fa"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/inventory/1763914346124/photo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"inventory",
+						"1763914346124",
+						"photo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "id",
+							"value": "1763914346124",
+							"type": "text"
+						},
+						{
+							"key": "has_photo",
+							"value": "yes\n",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/inventory/1763914346124",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"inventory",
+						"1763914346124"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
